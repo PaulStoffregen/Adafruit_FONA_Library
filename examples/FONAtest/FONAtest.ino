@@ -489,9 +489,14 @@ void loop() {
          while (fona.available()) {
            char c = fona.read();
            
+           #ifndef SERIAL_PORT_USBVIRTUAL
            // Serial.write is too slow, we'll write directly to Serial register!
            loop_until_bit_is_set(UCSR0A, UDRE0); /* Wait until data register empty. */
            UDR0 = c;
+           #else
+           // Serial.write should be fine on boards with USB virtual serial
+           Serial.write(c);
+           #endif
            
            length--;
            if (! length) break;
